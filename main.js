@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const vpp = 2 * Math.sqrt(2) * vrms;
 
         vrmsInput.value = vrms.toFixed(4);
-        vppInput.value = vpp.toFixed(4);
+        vppInput.value = vpp.toFixed(6);
     }
 
     function calculateFromVrms() {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isNaN(vrms) || isNaN(z) || vrms === 0) {
             if (vrms === 0) {
                 dbmInput.value = "-Infinity";
-                vppInput.value = "0";
+                vppInput.value = "0.000000";
             }
             return;
         }
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const vpp = 2 * Math.sqrt(2) * vrms;
 
         dbmInput.value = dbm.toFixed(2);
-        vppInput.value = vpp.toFixed(4);
+        vppInput.value = vpp.toFixed(6);
     }
 
     function calculateFromVpp() {
@@ -77,9 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
     dbmInput.addEventListener('input', calculateFromDbm);
     vrmsInput.addEventListener('input', calculateFromVrms);
     vppInput.addEventListener('input', calculateFromVpp);
-    impedanceInput.addEventListener('input', () => {
+    impedanceInput.addEventListener('change', () => {
         // If impedance changes, recalculate based on the last modified field.
-        // For simplicity, we'll just recalculate from dBm if it has a value.
         if (dbmInput.value !== "") {
             calculateFromDbm();
         } else if (vrmsInput.value !== "") {

@@ -51,7 +51,7 @@ h1 {
     color: #34495e;
 }
 
-.input-group input {
+.input-group input, .input-group select {
     padding: 12px;
     font-size: 1.1em;
     border: 1px solid #cbd5e0;
@@ -60,7 +60,7 @@ h1 {
     background-color: #f9fbfd;
 }
 
-.input-group input:focus {
+.input-group input:focus, .input-group select:focus {
     outline: none;
     border-color: #3498db;
     background-color: #fff;

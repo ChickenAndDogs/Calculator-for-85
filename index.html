@@ -14,22 +14,26 @@
         <div class="calculator-grid">
             <div class="input-group">
                 <label for="dbm">dBm (Power)</label>
-                <input type="number" id="dbm" step="any" placeholder="e.g. 0">
+                <input type="number" id="dbm" step="any">
             </div>
             
             <div class="input-group">
                 <label for="vpp">Vpp (Peak-to-Peak)</label>
-                <input type="number" id="vpp" step="any" placeholder="e.g. 0.632">
+                <input type="number" id="vpp" step="1">
             </div>
             
             <div class="input-group">
                 <label for="vrms">Vrms (Root Mean Square)</label>
-                <input type="number" id="vrms" step="any" placeholder="e.g. 0.224">
+                <input type="number" id="vrms" step="any">
             </div>
             
             <div class="input-group">
                 <label for="impedance">Z (Impedance Ω)</label>
-                <input type="number" id="impedance" step="any" value="50">
+                <select id="impedance">
+                    <option value="50" selected>50 Ω</option>
+                    <option value="150">150 Ω</option>
+                    <option value="600">600 Ω</option>
+                </select>
             </div>
         </div>
         
