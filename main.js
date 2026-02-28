@@ -5,17 +5,7 @@ function showCalculator(id) {
         if(c.id !== 'main-hub') c.style.display = 'none';
     });
     document.getElementById(id).style.display = 'block';
-    
-    // 수식 렌더링
-    if (window.renderMathInElement) {
-        renderMathInElement(document.getElementById(id), {
-            delimiters: [
-                {left: "$$", right: "$$", display: true},
-                {left: "$", right: "$", display: false}
-            ]
-        });
-    }
-    
+    if (window.renderMathInElement) renderMathInElement(document.getElementById(id));
     if(id === 'interpolation-calc') drawInterpolationGraph();
 }
 
@@ -33,83 +23,53 @@ function fNum(num, fixed) {
     return parts.join(".");
 }
 
-// 1. dBm ↔ Voltage 계산기 로직
-function initDbmCalc() {
-    const dbm = document.getElementById('dbm');
-    const vpp = document.getElementById('vpp');
-    const vp = document.getElementById('vp');
-    const vrms = document.getElementById('vrms');
-    const z = document.getElementById('impedance');
+// 통합 dBm/전력/전압 계산 로직
+function initCombinedCalc() {
+    const dbm = document.getElementById('c-dbm');
+    const watt = document.getElementById('c-watt');
+    const mwatt = document.getElementById('c-mwatt');
+    const vpp = document.getElementById('c-vpp');
+    const vp = document.getElementById('c-vp');
+    const vrms = document.getElementById('c-vrms');
+    const z = document.getElementById('c-impedance');
 
-    function update(d, pp, p, rms) {
-        if(d !== null) dbm.value = d.toFixed(4);
-        if(pp !== null) vpp.value = pp.toFixed(7);
-        if(p !== null) vp.value = p.toFixed(7);
-        if(rms !== null) vrms.value = rms.toFixed(7);
+    function updateAll(sourceType, value) {
+        if (isNaN(value)) return;
+        const impedance = parseFloat(z.value);
+        let p_mw;
+
+        // 1단계: 모든 입력을 Milliwatts (mW)로 통일
+        switch(sourceType) {
+            case 'dbm': p_mw = Math.pow(10, value/10); break;
+            case 'watt': p_mw = value * 1000; break;
+            case 'mwatt': p_mw = value; break;
+            case 'vrms': p_mw = (Math.pow(value, 2) / impedance) * 1000; break;
+            case 'vp': p_mw = (Math.pow(value / Math.sqrt(2), 2) / impedance) * 1000; break;
+            case 'vpp': p_mw = (Math.pow(value / (2 * Math.sqrt(2)), 2) / impedance) * 1000; break;
+        }
+
+        // 2단계: 통일된 p_mw를 기반으로 모든 필드 업데이트 (단, 현재 입력중인 필드는 제외)
+        if (sourceType !== 'dbm') dbm.value = (10 * Math.log10(p_mw)).toFixed(4);
+        if (sourceType !== 'watt') watt.value = (p_mw / 1000).toFixed(6);
+        if (sourceType !== 'mwatt') mwatt.value = p_mw.toFixed(4);
+        
+        const rms = Math.sqrt((p_mw / 1000) * impedance);
+        if (sourceType !== 'vrms') vrms.value = rms.toFixed(7);
+        if (sourceType !== 'vp') vp.value = (rms * Math.sqrt(2)).toFixed(7);
+        if (sourceType !== 'vpp') vpp.value = (rms * 2 * Math.sqrt(2)).toFixed(7);
     }
 
-    dbm.oninput = () => {
-        const val = parseFloat(dbm.value);
-        if(isNaN(val)) return;
-        const w = Math.pow(10, (val-30)/10);
-        const r = Math.sqrt(w * parseFloat(z.value));
-        update(null, 2*r*Math.sqrt(2), r*Math.sqrt(2), r);
-    };
-    vrms.oninput = () => {
-        const rms = parseFloat(vrms.value);
-        if(isNaN(rms)) return;
-        const d = 10 * Math.log10(Math.pow(rms,2)/parseFloat(z.value)) + 30;
-        update(d, 2*rms*Math.sqrt(2), rms*Math.sqrt(2), null);
-    };
-    vpp.oninput = () => {
-        const pp = parseFloat(vpp.value);
-        if(isNaN(pp)) return;
-        const rms = pp/(2*Math.sqrt(2));
-        const d = 10 * Math.log10(Math.pow(rms,2)/parseFloat(z.value)) + 30;
-        update(d, null, rms*Math.sqrt(2), rms);
-    };
-    vp.oninput = () => {
-        const p = parseFloat(vp.value);
-        if(isNaN(p)) return;
-        const rms = p/Math.sqrt(2);
-        const d = 10 * Math.log10(Math.pow(rms,2)/parseFloat(z.value)) + 30;
-        update(d, 2*p, null, rms);
-    };
-    z.onchange = () => dbm.oninput();
-    document.getElementById('reset-dbm').onclick = () => {
-        [dbm, vpp, vp, vrms].forEach(i => i.value = "");
+    dbm.oninput = () => updateAll('dbm', parseFloat(dbm.value));
+    watt.oninput = () => updateAll('watt', parseFloat(watt.value));
+    mwatt.oninput = () => updateAll('mwatt', parseFloat(mwatt.value));
+    vrms.oninput = () => updateAll('vrms', parseFloat(vrms.value));
+    vp.oninput = () => updateAll('vp', parseFloat(vp.value));
+    vpp.oninput = () => updateAll('vpp', parseFloat(vpp.value));
+    z.onchange = () => updateAll('dbm', parseFloat(dbm.value));
+
+    document.getElementById('reset-combined').onclick = () => {
+        [dbm, watt, mwatt, vpp, vp, vrms].forEach(i => i.value = "");
         z.value = "50";
-    };
-}
-
-// 1-2. dBm ↔ Watt 계산기 로직
-function initDbmWattCalc() {
-    const dbmIn = document.getElementById('dw-dbm');
-    const wattIn = document.getElementById('dw-watt');
-    const mwattIn = document.getElementById('dw-mwatt');
-
-    dbmIn.oninput = () => {
-        const d = parseFloat(dbmIn.value);
-        if(isNaN(d)) return;
-        const mw = Math.pow(10, d/10);
-        wattIn.value = (mw / 1000).toFixed(6);
-        mwattIn.value = mw.toFixed(4);
-    };
-    wattIn.oninput = () => {
-        const w = parseFloat(wattIn.value);
-        if(isNaN(w) || w <= 0) return;
-        const mw = w * 1000;
-        dbmIn.value = (10 * Math.log10(mw)).toFixed(4);
-        mwattIn.value = mw.toFixed(4);
-    };
-    mwattIn.oninput = () => {
-        const mw = parseFloat(mwattIn.value);
-        if(isNaN(mw) || mw <= 0) return;
-        dbmIn.value = (10 * Math.log10(mw)).toFixed(4);
-        wattIn.value = (mw / 1000).toFixed(6);
-    };
-    document.getElementById('reset-dw').onclick = () => {
-        [dbmIn, wattIn, mwattIn].forEach(i => i.value = "");
     };
 }
 
@@ -216,8 +176,7 @@ function calculateTSL() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    initDbmCalc();
-    initDbmWattCalc();
+    initCombinedCalc();
     setR1Range(1000); setR1Digit(0); setR2Range(1000); setR2Digit(0);
     document.getElementById('res1-spec-i').oninput = calculateResistor;
     document.getElementById('res2-spec-i').oninput = calculateResistor;

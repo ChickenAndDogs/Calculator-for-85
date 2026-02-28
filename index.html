@@ -17,16 +17,10 @@
         <p class="description">사용할 도구를 선택해 주세요.</p>
         
         <div class="tools-grid">
-            <button class="tool-card" onclick="showCalculator('dbm-calculator')">
+            <button class="tool-card" onclick="showCalculator('dbm-combined-calc')">
                 <span class="tool-icon">⚡</span>
-                <span class="tool-name">dBm ↔ Voltage</span>
-                <span class="tool-desc">전압(Vpp, Vrms) ↔ dBm 변환</span>
-            </button>
-
-            <button class="tool-card" onclick="showCalculator('dbm-watt-calc')">
-                <span class="tool-icon">🔋</span>
-                <span class="tool-name">dBm ↔ Watt</span>
-                <span class="tool-desc">Watt, mW ↔ dBm 상호 변환</span>
+                <span class="tool-name">dBm ↔ 전력/전압</span>
+                <span class="tool-desc">dBm, Watt, Vrms 등 통합 변환</span>
             </button>
 
             <button class="tool-card" onclick="showCalculator('resistor-calc')">
@@ -61,39 +55,32 @@
         </div>
     </div>
 
-    <!-- 1. dBm ↔ Voltage 계산기 (기존) -->
-    <div id="dbm-calculator" class="container" style="display: none;">
+    <!-- 통합 dBm 계산기 -->
+    <div id="dbm-combined-calc" class="container" style="display: none;">
         <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
-        <h1>dBm ↔ Voltage 계산기</h1>
+        <h1>dBm ↔ 전력/전압 통합 변환기</h1>
+        
         <div class="calculator-grid">
-            <div class="input-group"><label for="dbm">dBm (Power)</label><input type="number" id="dbm" step="any"></div>
-            <div class="input-group"><label for="vpp">Vpp (Peak-to-Peak)</label><input type="number" id="vpp" step="1"></div>
-            <div class="input-group"><label for="vp">Vp (Peak)</label><input type="number" id="vp" step="any"></div>
-            <div class="input-group"><label for="vrms">Vrms (Root Mean Square)</label><input type="number" id="vrms" step="any"></div>
-            <div class="input-group"><label for="impedance">Z (Impedance Ω)</label>
-                <select id="impedance"><option value="50" selected>50 Ω</option><option value="150">150 Ω</option><option value="600">600 Ω</option></select>
+            <!-- 전력 섹션 -->
+            <div class="input-group"><label>dBm</label><input type="number" id="c-dbm" step="any"></div>
+            <div class="input-group"><label>Watts (W)</label><input type="number" id="c-watt" step="any"></div>
+            <div class="input-group"><label>Milliwatts (mW)</label><input type="number" id="c-mwatt" step="any"></div>
+            
+            <!-- 전압 섹션 -->
+            <div class="input-group"><label>Vpp (Peak-to-Peak)</label><input type="number" id="c-vpp" step="1"></div>
+            <div class="input-group"><label>Vp (Peak)</label><input type="number" id="c-vp" step="any"></div>
+            <div class="input-group"><label>Vrms (Root Mean Square)</label><input type="number" id="c-vrms" step="any"></div>
+            
+            <!-- 임피던스 -->
+            <div class="input-group"><label>Z (Impedance Ω)</label>
+                <select id="c-impedance">
+                    <option value="50" selected>50 Ω</option>
+                    <option value="150">150 Ω</option>
+                    <option value="600">600 Ω</option>
+                </select>
             </div>
         </div>
-        <button id="reset-dbm" class="danger-btn">전체 초기화</button>
-    </div>
-
-    <!-- 1-2. dBm ↔ Watt 계산기 (신규) -->
-    <div id="dbm-watt-calc" class="container" style="display: none;">
-        <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
-        <h1>dBm ↔ Watt 변환기</h1>
-        <div class="calculator-grid">
-            <div class="input-group"><label>dBm</label><input type="number" id="dw-dbm" step="any" placeholder="예: 30"></div>
-            <div class="input-group"><label>Watts (W)</label><input type="number" id="dw-watt" step="any" placeholder="예: 1"></div>
-            <div class="input-group"><label>Milliwatts (mW)</label><input type="number" id="dw-mwatt" step="any" placeholder="예: 1000"></div>
-        </div>
-        <div class="result-box">
-            <p>변환 공식:</p>
-            <ul>
-                <li>$P(mW) = 10^{(dBm/10)}$</li>
-                <li>$dBm = 10 \times \log_{10}(P(mW))$</li>
-            </ul>
-        </div>
-        <button id="reset-dw" class="danger-btn">초기화</button>
+        <button id="reset-combined" class="danger-btn">전체 초기화</button>
     </div>
 
     <!-- 2. Decade Resistor 계산기 -->
