@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>공학용 도구 허브 (Engineering Tools Hub)</title>
     <link rel="stylesheet" href="style.css">
+    <!-- KaTeX 라이브러리 추가 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 </head>
 <body>
     <!-- 메인 네비게이션 허브 -->
@@ -15,46 +19,52 @@
         <div class="tools-grid">
             <button class="tool-card" onclick="showCalculator('dbm-calculator')">
                 <span class="tool-icon">⚡</span>
-                <span class="tool-name">dBm 계산기</span>
-                <span class="tool-desc">전력 및 전압 변환</span>
+                <span class="tool-name">dBm ↔ Voltage</span>
+                <span class="tool-desc">전압(Vpp, Vrms) ↔ dBm 변환</span>
+            </button>
+
+            <button class="tool-card" onclick="showCalculator('dbm-watt-calc')">
+                <span class="tool-icon">🔋</span>
+                <span class="tool-name">dBm ↔ Watt</span>
+                <span class="tool-desc">Watt, mW ↔ dBm 상호 변환</span>
             </button>
 
             <button class="tool-card" onclick="showCalculator('resistor-calc')">
                 <span class="tool-icon">🔌</span>
                 <span class="tool-name">Decade Resistor 체크</span>
-                <span class="tool-desc">저항 전력 및 허용 전류 확인</span>
+                <span class="tool-desc">이중 저항 합산 및 과전류 판정</span>
             </button>
 
             <button class="tool-card" onclick="showCalculator('interpolation-calc')">
                 <span class="tool-icon">📈</span>
                 <span class="tool-name">보간법 (Interpolation)</span>
-                <span class="tool-desc">선형 데이터 보간 및 그래프</span>
+                <span class="tool-desc">선형 데이터 보간 및 그래프 시각화</span>
             </button>
 
             <button class="tool-card" onclick="showCalculator('db-calc')">
                 <span class="tool-icon">🔊</span>
-                <span class="tool-name">dB 계산기</span>
-                <span class="tool-desc">전압비 기반 dB 환산</span>
+                <span class="tool-name">dB 계산기 (Gain/Loss)</span>
+                <span class="tool-desc">전압비(20log) 및 전력비(10log)</span>
             </button>
 
             <button class="tool-card" onclick="showCalculator('error-calc')">
                 <span class="tool-icon">⚖️</span>
                 <span class="tool-name">오차율 계산기</span>
-                <span class="tool-desc">측정 오차율 분석</span>
+                <span class="tool-desc">측정값 대비 오차 분석</span>
             </button>
 
             <button class="tool-card" onclick="showCalculator('tsl-calc')">
                 <span class="tool-icon">📋</span>
                 <span class="tool-name">TSL 체크</span>
-                <span class="tool-desc">PASS/FAIL 판정 및 단위 선택</span>
+                <span class="tool-desc">특정 절차 판정 (nano/micro 단위)</span>
             </button>
         </div>
     </div>
 
-    <!-- 1. dBm 계산기 -->
+    <!-- 1. dBm ↔ Voltage 계산기 (기존) -->
     <div id="dbm-calculator" class="container" style="display: none;">
         <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
-        <h1>dBm 계산기</h1>
+        <h1>dBm ↔ Voltage 계산기</h1>
         <div class="calculator-grid">
             <div class="input-group"><label for="dbm">dBm (Power)</label><input type="number" id="dbm" step="any"></div>
             <div class="input-group"><label for="vpp">Vpp (Peak-to-Peak)</label><input type="number" id="vpp" step="1"></div>
@@ -65,6 +75,25 @@
             </div>
         </div>
         <button id="reset-dbm" class="danger-btn">전체 초기화</button>
+    </div>
+
+    <!-- 1-2. dBm ↔ Watt 계산기 (신규) -->
+    <div id="dbm-watt-calc" class="container" style="display: none;">
+        <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
+        <h1>dBm ↔ Watt 변환기</h1>
+        <div class="calculator-grid">
+            <div class="input-group"><label>dBm</label><input type="number" id="dw-dbm" step="any" placeholder="예: 30"></div>
+            <div class="input-group"><label>Watts (W)</label><input type="number" id="dw-watt" step="any" placeholder="예: 1"></div>
+            <div class="input-group"><label>Milliwatts (mW)</label><input type="number" id="dw-mwatt" step="any" placeholder="예: 1000"></div>
+        </div>
+        <div class="result-box">
+            <p>변환 공식:</p>
+            <ul>
+                <li>$P(mW) = 10^{(dBm/10)}$</li>
+                <li>$dBm = 10 \times \log_{10}(P(mW))$</li>
+            </ul>
+        </div>
+        <button id="reset-dw" class="danger-btn">초기화</button>
     </div>
 
     <!-- 2. Decade Resistor 계산기 -->
@@ -112,7 +141,9 @@
     <div id="interpolation-calc" class="container" style="display: none;">
         <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
         <h1>보간법 (Interpolation)</h1>
-        <div class="formula-box">공식: $cfx = \frac{(fx - f1) \times (cf2 - cf1)}{f2 - f1} + cf1$</div>
+        <div class="formula-display">
+            $$ cfx = \frac{(fx - f_1) \times (cf_2 - cf_1)}{f_2 - f_1} + cf_1 $$
+        </div>
         <div class="calculator-grid">
             <div class="input-group"><label>f1 (X1)</label><input type="number" id="int-f1" step="any"></div>
             <div class="input-group"><label>cf1 (Y1)</label><input type="number" id="int-cf1" step="any"></div>
@@ -130,13 +161,27 @@
     <!-- 4. dB 계산기 -->
     <div id="db-calc" class="container" style="display: none;">
         <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
-        <h1>dB 계산기</h1>
-        <div class="formula-box">공식: $dB = 20 \times \log_{10}(V_1 / V_2)$</div>
-        <div class="calculator-grid">
-            <div class="input-group"><label>V1 (참조 전압)</label><input type="number" id="db-v1" step="any"></div>
-            <div class="input-group"><label>V2 (측정 전압)</label><input type="number" id="db-v2" step="any"></div>
+        <h1>dB 계산기 (Gain/Loss)</h1>
+        
+        <div class="resistor-section">
+            <h3>전압비 (Voltage Ratio)</h3>
+            <div class="formula-display">$$ dB = 20 \times \log_{10} \left( \frac{V_{out}}{V_{in}} \right) $$</div>
+            <div class="calculator-grid">
+                <div class="input-group"><label>V_out (출력 전압)</label><input type="number" id="db-vout" step="any"></div>
+                <div class="input-group"><label>V_in (입력 전압)</label><input type="number" id="db-vin" step="any"></div>
+            </div>
+            <div class="result-box"><h3>결과: <span id="db-v-result">-</span> dB</h3></div>
         </div>
-        <div class="result-box"><h3>dB 결과: <span id="db-result">-</span> dB</h3></div>
+
+        <div class="resistor-section">
+            <h3>전력비 (Power Ratio)</h3>
+            <div class="formula-display">$$ dB = 10 \times \log_{10} \left( \frac{P_{out}}{P_{in}} \right) $$</div>
+            <div class="calculator-grid">
+                <div class="input-group"><label>P_out (출력 전력)</label><input type="number" id="db-pout" step="any"></div>
+                <div class="input-group"><label>P_in (입력 전력)</label><input type="number" id="db-pin" step="any"></div>
+            </div>
+            <div class="result-box"><h3>결과: <span id="db-p-result">-</span> dB</h3></div>
+        </div>
         <button id="reset-db" class="danger-btn">초기화</button>
     </div>
 
@@ -144,7 +189,9 @@
     <div id="error-calc" class="container" style="display: none;">
         <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
         <h1>오차율 계산기</h1>
-        <div class="formula-box">공식: $오차율(\%) = \frac{M - T}{T} \times 100$</div>
+        <div class="formula-display">
+            $$ Error(\%) = \frac{M - T}{T} \times 100 $$
+        </div>
         <div class="calculator-grid">
             <div class="input-group"><label>T (참값)</label><input type="number" id="err-t" step="any"></div>
             <div class="input-group"><label>M (측정값)</label><input type="number" id="err-m" step="any"></div>
@@ -157,7 +204,9 @@
     <div id="tsl-calc" class="container" style="display: none;">
         <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
         <h1>TSL 체크</h1>
-        <div class="formula-box">판정식: $TS \le TSL$</div>
+        <div class="formula-display">
+            $$ TS \le TSL $$
+        </div>
         <div class="calculator-grid">
             <div class="input-group">
                 <label>P</label>

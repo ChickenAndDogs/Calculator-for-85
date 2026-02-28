@@ -209,17 +209,24 @@ hr {
     color: white;
 }
 
-/* Formula Box Style */
-.formula-box {
-    background-color: #eef2f7;
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.95em;
+/* Formula Display Style (for KaTeX) */
+.formula-display {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
     color: #2c3e50;
-    border: 1px dashed #3498db;
-    display: inline-block;
+    border: 1px solid #e2e8f0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60px;
+}
+
+/* KaTeX specific tweaks */
+.katex-display {
+    margin: 0 !important;
 }
 
 /* Graph Container */
@@ -228,13 +235,16 @@ hr {
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 10px;
+    padding: 15px;
     overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
 canvas {
     max-width: 100%;
     height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 .danger-btn {
