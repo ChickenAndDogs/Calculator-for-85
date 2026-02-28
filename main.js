@@ -1,96 +1,101 @@
 document.addEventListener('DOMContentLoaded', () => {
     const dbmInput = document.getElementById('dbm');
     const vppInput = document.getElementById('vpp');
+    const vpInput = document.getElementById('vp');
     const vrmsInput = document.getElementById('vrms');
     const impedanceInput = document.getElementById('impedance');
     const resetBtn = document.getElementById('reset-btn');
 
+    function updateOutputs(dbm, vpp, vp, vrms) {
+        if (dbm !== null) dbmInput.value = dbm.toFixed(4);
+        if (vpp !== null) vppInput.value = vpp.toFixed(7);
+        if (vp !== null) vpInput.value = vp.toFixed(7);
+        if (vrms !== null) vrmsInput.value = vrms.toFixed(7);
+    }
+
     function calculateFromDbm() {
         const dbm = parseFloat(dbmInput.value);
         const z = parseFloat(impedanceInput.value);
-        
         if (isNaN(dbm) || isNaN(z)) return;
 
-        // P (Watts) = 10^((dBm - 30) / 10)
         const watts = Math.pow(10, (dbm - 30) / 10);
-        
-        // Vrms = sqrt(P * Z)
         const vrms = Math.sqrt(watts * z);
-        
-        // Vpp = 2 * sqrt(2) * Vrms
-        const vpp = 2 * Math.sqrt(2) * vrms;
+        const vp = vrms * Math.sqrt(2);
+        const vpp = 2 * vp;
 
-        vrmsInput.value = vrms.toFixed(4);
-        vppInput.value = vpp.toFixed(6);
+        updateOutputs(null, vpp, vp, vrms);
     }
 
     function calculateFromVrms() {
         const vrms = parseFloat(vrmsInput.value);
         const z = parseFloat(impedanceInput.value);
-        
-        if (isNaN(vrms) || isNaN(z) || vrms === 0) {
-            if (vrms === 0) {
-                dbmInput.value = "-Infinity";
-                vppInput.value = "0.000000";
-            }
+        if (isNaN(vrms) || isNaN(z)) return;
+
+        if (vrms === 0) {
+            updateOutputs(-Infinity, 0, 0, null);
             return;
         }
 
-        // P (Watts) = Vrms^2 / Z
         const watts = Math.pow(vrms, 2) / z;
-        
-        // dBm = 10 * log10(P) + 30
         const dbm = 10 * Math.log10(watts) + 30;
-        
-        // Vpp = 2 * sqrt(2) * Vrms
-        const vpp = 2 * Math.sqrt(2) * vrms;
+        const vp = vrms * Math.sqrt(2);
+        const vpp = 2 * vp;
 
-        dbmInput.value = dbm.toFixed(2);
-        vppInput.value = vpp.toFixed(6);
+        updateOutputs(dbm, vpp, vp, null);
     }
 
     function calculateFromVpp() {
         const vpp = parseFloat(vppInput.value);
         const z = parseFloat(impedanceInput.value);
-        
-        if (isNaN(vpp) || isNaN(z) || vpp === 0) {
-            if (vpp === 0) {
-                dbmInput.value = "-Infinity";
-                vrmsInput.value = "0";
-            }
+        if (isNaN(vpp) || isNaN(z)) return;
+
+        if (vpp === 0) {
+            updateOutputs(-Infinity, null, 0, 0);
             return;
         }
 
-        // Vrms = Vpp / (2 * sqrt(2))
-        const vrms = vpp / (2 * Math.sqrt(2));
-        
-        // P (Watts) = Vrms^2 / Z
+        const vp = vpp / 2;
+        const vrms = vp / Math.sqrt(2);
         const watts = Math.pow(vrms, 2) / z;
-        
-        // dBm = 10 * log10(P) + 30
         const dbm = 10 * Math.log10(watts) + 30;
 
-        dbmInput.value = dbm.toFixed(2);
-        vrmsInput.value = vrms.toFixed(4);
+        updateOutputs(dbm, null, vp, vrms);
+    }
+
+    function calculateFromVp() {
+        const vp = parseFloat(vpInput.value);
+        const z = parseFloat(impedanceInput.value);
+        if (isNaN(vp) || isNaN(z)) return;
+
+        if (vp === 0) {
+            updateOutputs(-Infinity, 0, null, 0);
+            return;
+        }
+
+        const vpp = vp * 2;
+        const vrms = vp / Math.sqrt(2);
+        const watts = Math.pow(vrms, 2) / z;
+        const dbm = 10 * Math.log10(watts) + 30;
+
+        updateOutputs(dbm, vpp, null, vrms);
     }
 
     dbmInput.addEventListener('input', calculateFromDbm);
     vrmsInput.addEventListener('input', calculateFromVrms);
     vppInput.addEventListener('input', calculateFromVpp);
+    vpInput.addEventListener('input', calculateFromVp);
+    
     impedanceInput.addEventListener('change', () => {
-        // If impedance changes, recalculate based on the last modified field.
-        if (dbmInput.value !== "") {
-            calculateFromDbm();
-        } else if (vrmsInput.value !== "") {
-            calculateFromVrms();
-        } else if (vppInput.value !== "") {
-            calculateFromVpp();
-        }
+        if (dbmInput.value !== "") calculateFromDbm();
+        else if (vrmsInput.value !== "") calculateFromVrms();
+        else if (vppInput.value !== "") calculateFromVpp();
+        else if (vpInput.value !== "") calculateFromVp();
     });
 
     resetBtn.addEventListener('click', () => {
         dbmInput.value = "";
         vppInput.value = "";
+        vpInput.value = "";
         vrmsInput.value = "";
         impedanceInput.value = "50";
     });
