@@ -1,78 +1,185 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Engineering Tools Hub</title>
+    <title>공학용 도구 허브 (Engineering Tools Hub)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- 메인 네비게이션 허브 -->
     <div id="main-hub" class="container">
-        <h1>Engineering Tools Hub</h1>
-        <p class="description">Select a tool to get started.</p>
+        <h1>공학용 도구 허브</h1>
+        <p class="description">사용할 도구를 선택해 주세요.</p>
         
         <div class="tools-grid">
             <button class="tool-card" onclick="showCalculator('dbm-calculator')">
                 <span class="tool-icon">⚡</span>
-                <span class="tool-name">dBm Calculator</span>
-                <span class="tool-desc">Power & Voltage Conversions</span>
+                <span class="tool-name">dBm 계산기</span>
+                <span class="tool-desc">전력 및 전압 변환</span>
             </button>
-            
-            <!-- 새로운 계산기가 생기면 여기에 버튼을 추가하면 됩니다 -->
-            <div class="tool-card disabled">
-                <span class="tool-icon">➕</span>
-                <span class="tool-name">Coming Soon</span>
-                <span class="tool-desc">More tools are being added</span>
-            </div>
+
+            <button class="tool-card" onclick="showCalculator('resistor-calc')">
+                <span class="tool-icon">🔌</span>
+                <span class="tool-name">Decade Resistor 체크</span>
+                <span class="tool-desc">저항 전력 및 허용 전류 확인</span>
+            </button>
+
+            <button class="tool-card" onclick="showCalculator('interpolation-calc')">
+                <span class="tool-icon">📈</span>
+                <span class="tool-name">보간법 (Interpolation)</span>
+                <span class="tool-desc">선형 데이터 보간 및 그래프</span>
+            </button>
+
+            <button class="tool-card" onclick="showCalculator('db-calc')">
+                <span class="tool-icon">🔊</span>
+                <span class="tool-name">dB 계산기</span>
+                <span class="tool-desc">전압비 기반 dB 환산</span>
+            </button>
+
+            <button class="tool-card" onclick="showCalculator('error-calc')">
+                <span class="tool-icon">⚖️</span>
+                <span class="tool-name">오차율 계산기</span>
+                <span class="tool-desc">측정 오차율 분석</span>
+            </button>
+
+            <button class="tool-card" onclick="showCalculator('tsl-calc')">
+                <span class="tool-icon">📋</span>
+                <span class="tool-name">TSL 체크</span>
+                <span class="tool-desc">PASS/FAIL 판정 및 단위 선택</span>
+            </button>
         </div>
     </div>
 
-    <!-- dBm 계산기 화면 (초기에는 숨김) -->
+    <!-- 1. dBm 계산기 -->
     <div id="dbm-calculator" class="container" style="display: none;">
-        <div class="nav-header">
-            <button class="back-btn" onclick="showHub()">← Back to Hub</button>
+        <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
+        <h1>dBm 계산기</h1>
+        <div class="calculator-grid">
+            <div class="input-group"><label for="dbm">dBm (Power)</label><input type="number" id="dbm" step="any"></div>
+            <div class="input-group"><label for="vpp">Vpp (Peak-to-Peak)</label><input type="number" id="vpp" step="1"></div>
+            <div class="input-group"><label for="vp">Vp (Peak)</label><input type="number" id="vp" step="any"></div>
+            <div class="input-group"><label for="vrms">Vrms (Root Mean Square)</label><input type="number" id="vrms" step="any"></div>
+            <div class="input-group"><label for="impedance">Z (Impedance Ω)</label>
+                <select id="impedance"><option value="50" selected>50 Ω</option><option value="150">150 Ω</option><option value="600">600 Ω</option></select>
+            </div>
         </div>
-        
-        <h1>dBm Calculator</h1>
-        <p class="description">Enter any one value and the system impedance (Z) to calculate the others.</p>
-        
+        <button id="reset-dbm" class="danger-btn">전체 초기화</button>
+    </div>
+
+    <!-- 2. Decade Resistor 계산기 -->
+    <div id="resistor-calc" class="container" style="display: none;">
+        <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
+        <h1>Decade Resistor 체크</h1>
+        <div class="resistor-section">
+            <h3>저항 1 (Resistor 1)</h3>
+            <div class="calculator-grid">
+                <div class="input-group"><label>Range Ω</label>
+                    <div class="preset-buttons"><button class="r1-range-btn" onclick="setR1Range(1)">1</button><button class="r1-range-btn" onclick="setR1Range(10)">10</button><button class="r1-range-btn" onclick="setR1Range(100)">100</button><button class="r1-range-btn" onclick="setR1Range(1000)">1k</button><button class="r1-range-btn" onclick="setR1Range(10000)">10k</button><button class="r1-range-btn" onclick="setR1Range(100000)">100k</button><button class="r1-range-btn" onclick="setR1Range(1000000)">1M</button><button class="r1-range-btn" onclick="setR1Range(10000000)">10M</button></div>
+                </div>
+                <div class="input-group"><label>Digit 0-10</label>
+                    <div class="preset-buttons digit-grid"><button class="r1-digit-btn" onclick="setR1Digit(0)">0</button><button class="r1-digit-btn" onclick="setR1Digit(1)">1</button><button class="r1-digit-btn" onclick="setR1Digit(2)">2</button><button class="r1-digit-btn" onclick="setR1Digit(3)">3</button><button class="r1-digit-btn" onclick="setR1Digit(4)">4</button><button class="r1-digit-btn" onclick="setR1Digit(5)">5</button><button class="r1-digit-btn" onclick="setR1Digit(6)">6</button><button class="r1-digit-btn" onclick="setR1Digit(7)">7</button><button class="r1-digit-btn" onclick="setR1Digit(8)">8</button><button class="r1-digit-btn" onclick="setR1Digit(9)">9</button><button class="r1-digit-btn" onclick="setR1Digit(10)">10</button></div>
+                </div>
+                <div class="input-group"><label for="res1-spec-i">허용 전류 Spec (A)</label><input type="number" id="res1-spec-i" step="any"></div>
+            </div>
+        </div>
+        <div class="resistor-section">
+            <h3>저항 2 (Resistor 2)</h3>
+            <div class="calculator-grid">
+                <div class="input-group"><label>Range Ω</label>
+                    <div class="preset-buttons"><button class="r2-range-btn" onclick="setR2Range(1)">1</button><button class="r2-range-btn" onclick="setR2Range(10)">10</button><button class="r2-range-btn" onclick="setR2Range(100)">100</button><button class="r2-range-btn" onclick="setR2Range(1000)">1k</button><button class="r2-range-btn" onclick="setR2Range(10000)">10k</button><button class="r2-range-btn" onclick="setR2Range(100000)">100k</button><button class="r2-range-btn" onclick="setR2Range(1000000)">1M</button><button class="r2-range-btn" onclick="setR2Range(10000000)">10M</button></div>
+                </div>
+                <div class="input-group"><label>Digit 0-10</label>
+                    <div class="preset-buttons digit-grid"><button class="r2-digit-btn" onclick="setR2Digit(0)">0</button><button class="r2-digit-btn" onclick="setR2Digit(1)">1</button><button class="r2-digit-btn" onclick="setR2Digit(2)">2</button><button class="r2-digit-btn" onclick="setR2Digit(3)">3</button><button class="r2-digit-btn" onclick="setR2Digit(4)">4</button><button class="r2-digit-btn" onclick="setR2Digit(5)">5</button><button class="r2-digit-btn" onclick="setR2Digit(6)">6</button><button class="r2-digit-btn" onclick="setR2Digit(7)">7</button><button class="r2-digit-btn" onclick="setR2Digit(8)">8</button><button class="r2-digit-btn" onclick="setR2Digit(9)">9</button><button class="r2-digit-btn" onclick="setR2Digit(10)">10</button></div>
+                </div>
+                <div class="input-group"><label for="res2-spec-i">허용 전류 Spec (A)</label><input type="number" id="res2-spec-i" step="any"></div>
+            </div>
+        </div>
+        <div class="calculator-grid">
+            <div class="input-group" style="grid-column: span 2;"><label for="res-vrms">사용 전압 (Vrms)</label><input type="number" id="res-vrms" step="any"></div>
+        </div>
+        <div class="result-box">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div><p>합계 저항값: <br><strong><span id="res-total-val">0</span> Ω</strong></p><p>현재 전류: <br><strong><span id="res-i-actual">-</span> A</strong></p></div>
+                <div><p>허용 한계: <br><strong><span id="res-i-limit">-</span> A</strong></p><p>현재 전력: <br><strong><span id="res-p-calc">-</span> W</strong></p></div>
+            </div>
+            <div id="res-status" class="status-tag">상태: -</div>
+        </div>
+        <button id="reset-res" class="danger-btn">초기화</button>
+    </div>
+
+    <!-- 3. 보간법 계산기 -->
+    <div id="interpolation-calc" class="container" style="display: none;">
+        <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
+        <h1>보간법 (Interpolation)</h1>
+        <div class="formula-box">공식: $cfx = \frac{(fx - f1) \times (cf2 - cf1)}{f2 - f1} + cf1$</div>
+        <div class="calculator-grid">
+            <div class="input-group"><label>f1 (X1)</label><input type="number" id="int-f1" step="any"></div>
+            <div class="input-group"><label>cf1 (Y1)</label><input type="number" id="int-cf1" step="any"></div>
+            <div class="input-group"><label>f2 (X2)</label><input type="number" id="int-f2" step="any"></div>
+            <div class="input-group"><label>cf2 (Y2)</label><input type="number" id="int-cf2" step="any"></div>
+            <div class="input-group"><label>fx (Target X)</label><input type="number" id="int-fx" step="any"></div>
+        </div>
+        <div class="result-box"><h3>결과 (cfx): <span id="int-result">-</span></h3></div>
+        <div class="graph-container">
+            <canvas id="interpolation-graph" width="600" height="300"></canvas>
+        </div>
+        <button id="reset-int" class="danger-btn">초기화</button>
+    </div>
+
+    <!-- 4. dB 계산기 -->
+    <div id="db-calc" class="container" style="display: none;">
+        <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
+        <h1>dB 계산기</h1>
+        <div class="formula-box">공식: $dB = 20 \times \log_{10}(V_1 / V_2)$</div>
+        <div class="calculator-grid">
+            <div class="input-group"><label>V1 (참조 전압)</label><input type="number" id="db-v1" step="any"></div>
+            <div class="input-group"><label>V2 (측정 전압)</label><input type="number" id="db-v2" step="any"></div>
+        </div>
+        <div class="result-box"><h3>dB 결과: <span id="db-result">-</span> dB</h3></div>
+        <button id="reset-db" class="danger-btn">초기화</button>
+    </div>
+
+    <!-- 5. 오차율 계산기 -->
+    <div id="error-calc" class="container" style="display: none;">
+        <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
+        <h1>오차율 계산기</h1>
+        <div class="formula-box">공식: $오차율(\%) = \frac{M - T}{T} \times 100$</div>
+        <div class="calculator-grid">
+            <div class="input-group"><label>T (참값)</label><input type="number" id="err-t" step="any"></div>
+            <div class="input-group"><label>M (측정값)</label><input type="number" id="err-m" step="any"></div>
+        </div>
+        <div class="result-box"><h3>오차율: <span id="err-result">-</span> %</h3></div>
+        <button id="reset-err" class="danger-btn">초기화</button>
+    </div>
+
+    <!-- 6. TSL 체크 -->
+    <div id="tsl-calc" class="container" style="display: none;">
+        <div class="nav-header"><button class="back-btn" onclick="showHub()">← 메인으로 돌아가기</button></div>
+        <h1>TSL 체크</h1>
+        <div class="formula-box">판정식: $TS \le TSL$</div>
         <div class="calculator-grid">
             <div class="input-group">
-                <label for="dbm">dBm (Power)</label>
-                <input type="number" id="dbm" step="any">
+                <label>P</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="number" id="tsl-p" step="any" style="flex: 1;">
+                    <select id="tsl-p-unit"><option value="1e-9">nano (n)</option><option value="1e-6">micro (μ)</option><option value="1" selected>Unit</option></select>
+                </div>
             </div>
-            
             <div class="input-group">
-                <label for="vpp">Vpp (Peak-to-Peak)</label>
-                <input type="number" id="vpp" step="1">
-            </div>
-
-            <div class="input-group">
-                <label for="vp">Vp (Peak)</label>
-                <input type="number" id="vp" step="any">
-            </div>
-            
-            <div class="input-group">
-                <label for="vrms">Vrms (Root Mean Square)</label>
-                <input type="number" id="vrms" step="any">
-            </div>
-            
-            <div class="input-group">
-                <label for="impedance">Z (Impedance Ω)</label>
-                <select id="impedance">
-                    <option value="50" selected>50 Ω</option>
-                    <option value="150">150 Ω</option>
-                    <option value="600">600 Ω</option>
-                </select>
+                <label>W</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="number" id="tsl-w" step="any" style="flex: 1;">
+                    <select id="tsl-w-unit"><option value="1e-9">nano (n)</option><option value="1e-6">micro (μ)</option><option value="1" selected>Unit</option></select>
+                </div>
             </div>
         </div>
-        
-        <button id="reset-btn" class="danger-btn">Reset All</button>
-        
-        <div class="info-footer">
-            <p>Calculations assume a sine wave.</p>
+        <div class="result-box" id="tsl-box">
+            <p>TS: <span id="tsl-ts">-</span></p>
+            <p>TSL 한계치: <span id="tsl-limit">-</span></p>
+            <div id="tsl-status" class="status-tag">결과: -</div>
         </div>
+        <button id="reset-tsl" class="danger-btn">초기화</button>
     </div>
 
     <script src="main.js"></script>
