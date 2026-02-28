@@ -1,3 +1,19 @@
+// Navigation Functions
+function showCalculator(id) {
+    document.getElementById('main-hub').style.display = 'none';
+    document.getElementById(id).style.display = 'block';
+}
+
+function showHub() {
+    // Hide all calculator sections
+    const calculators = ['dbm-calculator'];
+    calculators.forEach(id => {
+        document.getElementById(id).style.display = 'none';
+    });
+    // Show main hub
+    document.getElementById('main-hub').style.display = 'block';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const dbmInput = document.getElementById('dbm');
     const vppInput = document.getElementById('vpp');

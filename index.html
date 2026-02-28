@@ -3,13 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dBm to Voltage Calculator</title>
+    <title>Engineering Tools Hub</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+    <!-- 메인 네비게이션 허브 -->
+    <div id="main-hub" class="container">
+        <h1>Engineering Tools Hub</h1>
+        <p class="description">Select a tool to get started.</p>
+        
+        <div class="tools-grid">
+            <button class="tool-card" onclick="showCalculator('dbm-calculator')">
+                <span class="tool-icon">⚡</span>
+                <span class="tool-name">dBm Calculator</span>
+                <span class="tool-desc">Power & Voltage Conversions</span>
+            </button>
+            
+            <!-- 새로운 계산기가 생기면 여기에 버튼을 추가하면 됩니다 -->
+            <div class="tool-card disabled">
+                <span class="tool-icon">➕</span>
+                <span class="tool-name">Coming Soon</span>
+                <span class="tool-desc">More tools are being added</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- dBm 계산기 화면 (초기에는 숨김) -->
+    <div id="dbm-calculator" class="container" style="display: none;">
+        <div class="nav-header">
+            <button class="back-btn" onclick="showHub()">← Back to Hub</button>
+        </div>
+        
         <h1>dBm Calculator</h1>
-        <p class="description">Enter any one value (dBm, Vpp, or Vrms) and the system impedance (Z) to calculate the others.</p>
+        <p class="description">Enter any one value and the system impedance (Z) to calculate the others.</p>
         
         <div class="calculator-grid">
             <div class="input-group">
@@ -42,12 +68,13 @@
             </div>
         </div>
         
-        <button id="reset-btn">Reset All</button>
+        <button id="reset-btn" class="danger-btn">Reset All</button>
         
         <div class="info-footer">
             <p>Calculations assume a sine wave.</p>
         </div>
     </div>
+
     <script src="main.js"></script>
 </body>
 </html>
