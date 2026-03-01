@@ -96,7 +96,7 @@
                 <div class="input-group"><label>Digit 0-10</label>
                     <div class="preset-buttons digit-grid"><button class="r1-digit-btn" onclick="setR1Digit(0)">0</button><button class="r1-digit-btn" onclick="setR1Digit(1)">1</button><button class="r1-digit-btn" onclick="setR1Digit(2)">2</button><button class="r1-digit-btn" onclick="setR1Digit(3)">3</button><button class="r1-digit-btn" onclick="setR1Digit(4)">4</button><button class="r1-digit-btn" onclick="setR1Digit(5)">5</button><button class="r1-digit-btn" onclick="setR1Digit(6)">6</button><button class="r1-digit-btn" onclick="setR1Digit(7)">7</button><button class="r1-digit-btn" onclick="setR1Digit(8)">8</button><button class="r1-digit-btn" onclick="setR1Digit(9)">9</button><button class="r1-digit-btn" onclick="setR1Digit(10)">10</button></div>
                 </div>
-                <div class="input-group"><label for="res1-spec-i">허용 전류 Spec (A)</label><input type="number" id="res1-spec-i" step="any"></div>
+                <div class="input-group"><label for="res1-spec-i">Max 전류 (mA)</label><input type="number" id="res1-spec-i" step="any"></div>
             </div>
         </div>
         <div class="resistor-section">
@@ -108,7 +108,7 @@
                 <div class="input-group"><label>Digit 0-10</label>
                     <div class="preset-buttons digit-grid"><button class="r2-digit-btn" onclick="setR2Digit(0)">0</button><button class="r2-digit-btn" onclick="setR2Digit(1)">1</button><button class="r2-digit-btn" onclick="setR2Digit(2)">2</button><button class="r2-digit-btn" onclick="setR2Digit(3)">3</button><button class="r2-digit-btn" onclick="setR2Digit(4)">4</button><button class="r2-digit-btn" onclick="setR2Digit(5)">5</button><button class="r2-digit-btn" onclick="setR2Digit(6)">6</button><button class="r2-digit-btn" onclick="setR2Digit(7)">7</button><button class="r2-digit-btn" onclick="setR2Digit(8)">8</button><button class="r2-digit-btn" onclick="setR2Digit(9)">9</button><button class="r2-digit-btn" onclick="setR2Digit(10)">10</button></div>
                 </div>
-                <div class="input-group"><label for="res2-spec-i">허용 전류 Spec (A)</label><input type="number" id="res2-spec-i" step="any"></div>
+                <div class="input-group"><label for="res2-spec-i">Max 전류 (mA)</label><input type="number" id="res2-spec-i" step="any"></div>
             </div>
         </div>
         <div class="calculator-grid">
@@ -116,8 +116,8 @@
         </div>
         <div class="result-box">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div><p>합계 저항값: <br><strong><span id="res-total-val">0</span> Ω</strong></p><p>현재 전류: <br><strong><span id="res-i-actual">-</span> A</strong></p></div>
-                <div><p>허용 한계: <br><strong><span id="res-i-limit">-</span> A</strong></p><p>현재 전력: <br><strong><span id="res-p-calc">-</span> W</strong></p></div>
+                <div><p>합계 저항값: <br><strong><span id="res-total-val">0</span> Ω</strong></p><p>현재 전류: <br><strong><span id="res-i-actual">-</span> mA</strong></p></div>
+                <div><p>허용 한계: <br><strong><span id="res-i-limit">-</span> mA</strong></p><p>현재 전력: <br><strong><span id="res-p-calc">-</span> W</strong></p></div>
             </div>
             <div id="res-status" class="status-tag">상태: -</div>
         </div>

@@ -89,15 +89,24 @@ function updateRButtons(cls, val) {
 }
 
 function calculateResistor() {
-    const specI1 = parseFloat(document.getElementById('res1-spec-i').value);
-    const specI2 = parseFloat(document.getElementById('res2-spec-i').value);
+    const specI1_mA = parseFloat(document.getElementById('res1-spec-i').value);
+    const specI2_mA = parseFloat(document.getElementById('res2-spec-i').value);
     const vrms = parseFloat(document.getElementById('res-vrms').value);
     const totalR = (r1Range * r1Digit) + (r2Range * r2Digit);
-    const limitI1 = (!isNaN(specI1)) ? r1Digit * specI1 : 0;
-    const limitI2 = (!isNaN(specI2)) ? r2Digit * specI2 : 0;
-    const finalLimitI = limitI1 + limitI2;
+
+    // 허용 한계: Digit가 0인 경우 해당 저항의 Max 전류는 무시하고, 0보다 큰 것 중 최솟값을 사용
+    let finalLimitI_mA = null;
+    let limits = [];
+    if (r1Digit > 0 && !isNaN(specI1_mA)) limits.push(specI1_mA);
+    if (r2Digit > 0 && !isNaN(specI2_mA)) limits.push(specI2_mA);
+    
+    if (limits.length > 0) {
+        finalLimitI_mA = Math.min(...limits);
+    }
+
     document.getElementById('res-total-val').textContent = fNum(totalR, 0);
-    document.getElementById('res-i-limit').textContent = (isNaN(specI1) && isNaN(specI2)) ? "-" : fNum(finalLimitI, 6);
+    document.getElementById('res-i-limit').textContent = (finalLimitI_mA === null) ? "-" : fNum(finalLimitI_mA, 3);
+
     if (totalR === 0 || isNaN(vrms)) {
         document.getElementById('res-i-actual').textContent = "-";
         document.getElementById('res-p-calc').textContent = "-";
@@ -105,13 +114,28 @@ function calculateResistor() {
         document.getElementById('res-status').textContent = "상태: -";
         return;
     }
-    const actualI = vrms / totalR;
-    const actualP = Math.pow(actualI, 2) * totalR;
-    document.getElementById('res-i-actual').textContent = fNum(actualI, 6);
+
+    // 현재 전류 (mA) = (사용 전압 / 합계 저항값) * 1000
+    const actualI_A = vrms / totalR;
+    const actualI_mA = actualI_A * 1000;
+    const actualP = Math.pow(actualI_A, 2) * totalR;
+
+    document.getElementById('res-i-actual').textContent = fNum(actualI_mA, 3);
     document.getElementById('res-p-calc').textContent = fNum(actualP, 4);
+
     const status = document.getElementById('res-status');
-    if (actualI <= finalLimitI) { status.textContent = "상태: PASS (정상)"; status.className = "status-tag status-pass"; }
-    else { status.textContent = "상태: FAIL (과전류)"; status.className = "status-tag status-fail"; }
+    if (finalLimitI_mA !== null) {
+        if (actualI_mA <= finalLimitI_mA) {
+            status.textContent = "상태: PASS (사용가능)";
+            status.className = "status-tag status-pass";
+        } else {
+            status.textContent = "상태: FAIL (과전류)";
+            status.className = "status-tag status-fail";
+        }
+    } else {
+        status.textContent = "상태: -";
+        status.className = "status-tag";
+    }
 }
 
 // 3. 보간법 로직 + 그래프
