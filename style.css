@@ -26,6 +26,20 @@ h1 {
     font-size: 2em;
     color: #1a202c;
     letter-spacing: -0.5px;
+    margin-top: 0;
+}
+
+.title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.title-icon {
+    width: 48px;
+    height: 48px;
 }
 
 .description {
