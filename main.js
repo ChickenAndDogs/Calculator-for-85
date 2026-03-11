@@ -187,16 +187,60 @@ function calculateError() {
 
 // 6. TSL 로직
 function calculateTSL() {
-    const p = parseFloat(document.getElementById('tsl-p').value) * (parseFloat(document.getElementById('tsl-p-unit').value) || 1);
-    const w = parseFloat(document.getElementById('tsl-w').value) * (parseFloat(document.getElementById('tsl-w-unit').value) || 1);
-    if(isNaN(p) || isNaN(w)) return;
-    const b2 = 0.99999998e-6, b3 = 0.499418e-6; 
-    const ts = (b2 / 2) - b3, limit = (0.0002 * b2) + 3e-9;
+    const pInput = document.getElementById('tsl-p').value;
+    const wInput = document.getElementById('tsl-w').value;
+    const pUnit = parseFloat(document.getElementById('tsl-p-unit').value) || 1;
+    const wUnit = parseFloat(document.getElementById('tsl-w-unit').value) || 1;
+
+    if (!pInput || !wInput) {
+        document.getElementById('tsl-ts').textContent = "-";
+        document.getElementById('tsl-limit').textContent = "-";
+        const status = document.getElementById('tsl-status');
+        status.textContent = "결과: -";
+        status.className = "status-tag";
+        return;
+    }
+
+    const p = parseFloat(pInput) * pUnit;
+    const w = parseFloat(wInput) * wUnit;
+    
+    if (isNaN(p) || isNaN(w)) return;
+
+    const ts = Math.abs((p / 2) - w);
+    const limit = (0.0002 * p) + 3e-9;
+
     document.getElementById('tsl-ts').textContent = ts.toExponential(4).replace('e', ' e');
     document.getElementById('tsl-limit').textContent = limit.toExponential(4).replace('e', ' e');
     const status = document.getElementById('tsl-status');
-    if(ts <= limit) { status.textContent = "결과: PASS"; status.className = "status-tag status-pass"; }
-    else { status.textContent = "결과: FAIL"; status.className = "status-tag status-fail"; }
+    if (ts <= limit) {
+        status.textContent = "결과: PASS";
+        status.className = "status-tag status-pass";
+    } else {
+        status.textContent = "결과: FAIL";
+        status.className = "status-tag status-fail";
+    }
+}
+
+// 7. Return Loss 로직
+function calculateRL() {
+    const swr = parseFloat(document.getElementById('rl-swr').value);
+    if (isNaN(swr) || swr < 1) {
+        document.getElementById('rl-gamma').textContent = "-";
+        document.getElementById('rl-result').textContent = "-";
+        return;
+    }
+
+    if (swr === 1) {
+        document.getElementById('rl-gamma').textContent = "0.0000";
+        document.getElementById('rl-result').textContent = "∞";
+        return;
+    }
+
+    const gamma = (swr - 1) / (swr + 1);
+    const rl = -20 * Math.log10(gamma);
+
+    document.getElementById('rl-gamma').textContent = gamma.toFixed(4);
+    document.getElementById('rl-result').textContent = rl.toFixed(4);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -209,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ['db-vout','db-vin','db-pout','db-pin'].forEach(id => document.getElementById(id).oninput = calculateDB);
     ['err-t','err-m'].forEach(id => document.getElementById(id).oninput = calculateError);
     ['tsl-p','tsl-w','tsl-p-unit','tsl-w-unit'].forEach(id => document.getElementById(id).oninput = calculateTSL);
+    document.getElementById('rl-swr').oninput = calculateRL;
 
     document.getElementById('reset-res').onclick = () => {
         ['res1-spec-i','res2-spec-i','res-vrms'].forEach(id => document.getElementById(id).value = "");
@@ -222,4 +267,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('reset-db').onclick = () => { ['db-vout','db-vin','db-pout','db-pin'].forEach(id => document.getElementById(id).value = ""); document.getElementById('db-v-result').textContent = "-"; document.getElementById('db-p-result').textContent = "-"; };
     document.getElementById('reset-err').onclick = () => { ['err-t','err-m'].forEach(id => document.getElementById(id).value = ""); document.getElementById('err-result').textContent = "-"; };
     document.getElementById('reset-tsl').onclick = () => { ['tsl-p','tsl-w'].forEach(id => document.getElementById(id).value = ""); calculateTSL(); };
+    document.getElementById('reset-rl').onclick = () => { document.getElementById('rl-swr').value = ""; calculateRL(); };
 });
