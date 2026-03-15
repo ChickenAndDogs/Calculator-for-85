@@ -4,32 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>참새 계산기</title>
-    <link rel="icon" href="짹짹.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%237ec8f8'/><path d='M75 45 C85 45 95 55 95 70 C95 85 80 90 65 85 L85 95 L75 80 C60 85 45 80 35 70 C25 60 25 45 35 35 C45 25 65 25 75 45' fill='%23a67c52'/><circle cx='65' cy='60' r='25' fill='%23a67c52'/><path d='M45 55 C40 55 35 60 35 68 C35 75 40 80 45 80 C50 80 55 75 55 68 C55 60 50 55 45 55' fill='white'/><circle cx='40' cy='45' r='4' fill='black'/><path d='M30 50 L15 45 L25 60 L15 75 L40 65' fill='%23ffd700' stroke='black' stroke-width='2'/><path d='M50 85 L45 92 M60 85 L65 92' stroke='black' stroke-width='3' stroke-linecap='round'/></svg>">
     <link rel="stylesheet" href="style.css">
     <!-- KaTeX 라이브러리 추가 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="onload=renderMathInElement(document.body);"></script>
 </head>
 <body>
     <!-- 메인 네비게이션 허브 -->
     <div id="main-hub" class="container">
         <div class="title-container">
-            <svg class="title-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- 둥근 몸통 -->
-                <path d="M12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18Z" fill="#2563eb" fill-opacity="0.1" stroke="#2563eb" stroke-width="1.5"/>
-                <!-- 머리 -->
-                <circle cx="16" cy="10" r="4" fill="#2563eb" fill-opacity="0.1" stroke="#2563eb" stroke-width="1.5"/>
+            <svg class="title-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- 배경 원 -->
+                <circle cx="50" cy="50" r="48" fill="#7ec8f8"/>
+                <!-- 참새 몸통 -->
+                <path d="M75 45 C85 45 95 55 95 70 C95 85 80 90 65 85 L85 95 L75 80 C60 85 45 80 35 70 C25 60 25 45 35 35 C45 25 65 25 75 45" fill="#a67c52"/>
+                <!-- 참새 머리 부분 -->
+                <circle cx="65" cy="60" r="25" fill="#a67c52"/>
+                <!-- 볼 부분 (흰색) -->
+                <path d="M45 55 C40 55 35 60 35 68 C35 75 40 80 45 80 C50 80 55 75 55 68 C55 60 50 55 45 55" fill="white"/>
                 <!-- 눈 -->
-                <circle cx="17.5" cy="9" r="0.5" fill="#2563eb"/>
-                <!-- 부리 -->
-                <path d="M20 10L22 10.5L20 11V10Z" fill="#2563eb"/>
-                <!-- 날개 -->
-                <path d="M8 12C8 12 9 14 11 14" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round"/>
-                <!-- 꼬리 -->
-                <path d="M6 12L3 13L4 11L6 12Z" fill="#2563eb" fill-opacity="0.1" stroke="#2563eb" stroke-width="1.5"/>
+                <circle cx="40" cy="45" r="4" fill="black"/>
+                <!-- 번개 -->
+                <path d="M30 50 L15 45 L25 60 L15 75 L40 65" fill="#ffd700" stroke="black" stroke-width="2"/>
                 <!-- 다리 -->
-                <path d="M11 18V20M13 18V20" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M50 85 L45 92 M60 85 L65 92" stroke="black" stroke-width="3" stroke-linecap="round"/>
             </svg>
             <h1>참새 계산기</h1>
         </div>
